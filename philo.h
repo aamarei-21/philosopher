@@ -6,7 +6,7 @@
 /*   By: aamarei <aamarei@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/15 10:19:37 by aamarei           #+#    #+#             */
-/*   Updated: 2021/07/16 11:07:49 by aamarei          ###   ########.fr       */
+/*   Updated: 2021/07/16 11:15:47 by aamarei          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,9 @@
 
 typedef struct		s_forks
 {
-	pthread_mutex_t	fork;
+	pthread_mutex_t	*left;
+	pthread_mutex_t	*right;
 }					t_forks;
-
-
 
 typedef struct			s_phil_data
 {
