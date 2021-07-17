@@ -6,11 +6,12 @@
 /*   By: aamarei <aamarei@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/15 18:57:34 by aamarei           #+#    #+#             */
-/*   Updated: 2021/07/16 10:27:33 by aamarei          ###   ########.fr       */
+/*   Updated: 2021/07/17 11:49:25 by aamarei          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
 
 int	ft_even(int c)
 {
@@ -40,92 +41,119 @@ unsigned long long	ft_relative_time(void)
 		start = ft_gettime();
 		fl = 1;
 	}
-	finish = ft_gettime() - start;
-	return (finish);
+	return (ft_gettime() - start);
 }
+
+void	ft_wait(unsigned long long tm)
+{
+	unsigned long long	finish;
+
+	finish = ft_relative_time() + tm;
+	while (ft_relative_time() < finish)
+		usleep(1);
+
+}
+
+void informer(t_philos **phil, int k, unsigned long long time)
+{
+	pthread_mutex_lock((*phil)->start_data->prin);
+	if (k == 1)
+		printf("%llu ms: %d has taken a right fork\n", time, (*phil)->num);
+	else if (k == 2)
+		printf("%llu ms: %d has taken a left fork\n", time, (*phil)->num);
+	else if (k == 3)
+		printf("%llu ms: %d is eating\n", time, (*phil)->num);
+	else if (k == 4)
+		printf("%llu ms: %d is sleeping\n", time, (*phil)->num);
+	else if (k == 5)
+		printf("%llu ms: %d is thinking\n", time, (*phil)->num);
+	else if (k == 6)
+		printf("%llu ms: %d died\n", time, (*phil)->num);
+}
+
+
+void	*monitor_died(void *dt)
+{
+	t_philos	*phil;
+
+	phil = (t_philos *)dt;
+	while (1)
+	{
+		if (ft_relative_time() > phil->time_died)
+		{
+			phil->start_data->fl = 0;
+			informer(&phil, 6, ft_relative_time());
+			return (0);
+		}
+		ft_wait(1);
+	}
+	return (0);
+}
+
 
 void	*main_thread(void *ph)
 {
-	t_philosopher *phil;
+	t_philos *phil;
+	unsigned long long	time;
+	pthread_t		th;
+	unsigned long long i;
 
-	phil = (t_philosopher *)ph;
-
-//printf("number philosopher = %d\n", phil->timest.num_phil);
-//printf("time died = %llu\n", phil->timest.died);
-//printf("time eating = %llu\n", phil->timest.eating);
-//printf("time sleeping = %llu\n", phil->timest.sleeping);
-//printf("number eating = %d\n", phil->timest.num_phil);
-
-
-	if (phil->num == phil->timest.num_phil && !ft_even(phil->num))
-		usleep(1000);
-printf("phil->num = %d : %d\n", phil->num, ft_even(phil->num));
-	if (ft_even(phil->num))
+	i = 0;
+	phil = (t_philos *)ph;
+	pthread_detach(phil->th);
+	time = ft_relative_time();
+	phil->time_died = time + phil->start_data->died;
+	pthread_create(&th, NULL, monitor_died, (void *)(phil));
+	pthread_detach(th);
+	if (!ft_even(phil->num))
+		ft_wait(1);
+	while (i++ != phil->start_data->num_eat)
 	{
-		pthread_mutex_lock(phil->forks->right);
-		printf("timestamp_in_ms %d has taken a fork\n", phil->num);
-		pthread_mutex_lock(phil->forks->left);
-		printf("timestamp_in_ms %d has taken a fork\n", phil->num);
+		pthread_mutex_lock(&phil->forks[phil->right].fork);
+		time = ft_relative_time();
+		informer(&phil, 1, time);
+		pthread_mutex_unlock(phil->start_data->prin);
+		pthread_mutex_lock(&phil->forks[phil->left].fork);
+		time = ft_relative_time();
+		informer(&phil, 2, time);
+		pthread_mutex_unlock(phil->start_data->prin);
 
+		time = ft_relative_time();
+		informer(&phil, 3, time);
+		pthread_mutex_unlock(phil->start_data->prin);
+		phil->time_died = time + phil->start_data->died;
+		ft_wait(phil->start_data->eating);
+
+
+		pthread_mutex_unlock(&phil->forks[phil->right].fork);
+		pthread_mutex_unlock(&phil->forks[phil->left].fork);
+		time = ft_relative_time();
+		informer(&phil, 4, time);
+		pthread_mutex_unlock(phil->start_data->prin);
+		ft_wait(phil->start_data->sleeping);
+		time = ft_relative_time();
+		informer(&phil, 5, time);
+		pthread_mutex_unlock(phil->start_data->prin);
 	}
-	else
-	{
-		pthread_mutex_lock(phil->forks->left);
-		printf("timestamp_in_ms %d has taken a fork\n", phil->num);
-		pthread_mutex_lock(phil->forks->right);
-		printf("timestamp_in_ms %d has taken a fork\n", phil->num);
-	}
-
-		printf("timestamp_in_ms %d is eating\n", phil->num);
-		usleep(phil->timest.eating * 1000);
-
-	//if (ft_even(phil->num))
-	//{
-		pthread_mutex_unlock(phil->forks->right);
-		pthread_mutex_unlock(phil->forks->left);
-	//}
-	//else
-	//{
-	//	pthread_mutex_unlock(phil->forks->left);
-	//	pthread_mutex_unlock(phil->forks->right);
-	//}
+	phil->start_data->fl = 2;
 	return (0);
 }
 
-int	ft_create_philoph(t_philosopher **phil, t_phil_data *tm)
+int	ft_create_philoph(t_philos **phil, t_phil_data *tm)
 {
 	int				i;
-	//pthread_t		temp;
 
-	i = -1;
-	while (++i < tm->num_phil)
-	{
-	printf("i = %d\n", i);
-		//temp = (*phil)[i].th;
+	i = 0;
+	while (++i <= tm->num_phil)
 		pthread_create(&(*phil)[i].th, NULL, main_thread, (void *)(&(*phil)[i]));
-		printf("Start thread - %d\n", i);
+	while (tm->fl != 2)
+	{
+		if (tm->fl == 0)
+			return (0);
 	}
-
-	i = -1;
-	//while (++i < tm->num_phil)
-	//{
-	//	pthread_join((*phil)[i].th, NULL);
-	//	printf("Finished thread - %d\n", i);
-	//}
+	i = 0;
+	while (++i <= tm->num_phil)
+		pthread_join((*phil)[i].th, NULL);
 	return (0);
 }
 
-//int	main(void)
-//{
-//	ft_relative_time();
-//	printf ("%llu\n", ft_relative_time());
-//	usleep(500000);
-//	printf ("%llu\n", ft_relative_time());
-//	usleep(500000);
-//	printf ("%llu\n", ft_relative_time());
-//	usleep(50000);
-//	printf ("%llu\n", ft_relative_time());
-//	usleep(15555555);
-//	printf ("%llu\n", ft_relative_time());
-//	return (0);
-//}

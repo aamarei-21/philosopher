@@ -6,7 +6,7 @@
 /*   By: aamarei <aamarei@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/15 10:46:50 by aamarei           #+#    #+#             */
-/*   Updated: 2021/07/16 10:36:58 by aamarei          ###   ########.fr       */
+/*   Updated: 2021/07/17 11:55:42 by aamarei          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ int	ft_digit(char *d)
 
 int	pars_arg(int c, t_phil_data *phil, char **v)
 {
+
+	phil->fl = 1;
 	phil->num_phil = ft_digit(v[1]);
 	phil->died = ft_digit(v[2]);
 	phil->eating = ft_digit(v[3]);
@@ -68,63 +70,63 @@ int	pars_arg(int c, t_phil_data *phil, char **v)
 			return (-1);
 	}
 	else if (c == 5)
-		phil->num_eat = 0;
+		phil->num_eat = -1;
 	else if (c > 6)
 		return (-1);
 	return (0);
 }
 
-void	ft_init_phil(t_philosopher **phil, t_phil_data *tm)
+void	ft_init_phil(t_philos **phil, t_phil_data *tm, t_forks *forks)
 {
 	int		i;
 
-	i = -1;
-	*phil = (t_philosopher *)malloc(sizeof(t_philosopher) * tm->num_phil);
-	while (++i < tm->num_phil)
+	i = 0;
+	*phil = (t_philos *)malloc(sizeof(t_philos) * (tm->num_phil + 1));
+	while (++i <= tm->num_phil)
 	{
 
 		(*phil)[i].num = i;
-		(*phil)[i].forks = malloc(sizeof(t_forks));
-		(*phil)[i].forks->right = &phil[i]->fork;
-		if (i == 0)
+		(*phil)[i].right = i;
+		if (i == 1)
 		{
 			if (tm->num_phil == 1)
-				(*phil)[i].forks->left = &phil[i]->fork;
+				(*phil)[i].left = i;
 			else
-				(*phil)[i].forks->left = &phil[tm->num_phil - 1]->fork;
+				(*phil)[i].left = tm->num_phil;
 		}
 		else
-			(*phil)[i].forks->left = &phil[i - 1]->fork;
+			(*phil)[i].left = i - 1;
 		(*phil)[i].time_died = 0;
+		(*phil)[i].start_data = tm;
+		(*phil)[i].forks = forks;
 	}
 }
 
-int	ft_init_mutex(t_philosopher *phil, t_phil_data *tm)
+int	ft_init_mutex(t_forks *forks, t_phil_data *tm)
 {
 	int	i;
 	int	er;
 
 	i = 0;
-	while (i < tm->num_phil)
+	while (++i <= tm->num_phil)
 	{
-printf("++++ philosopher = %d\n", phil[i].num);
-		er = pthread_mutex_init(&phil[i].fork, NULL);
+		er = pthread_mutex_init(&forks[i].fork, NULL);
 		if (er != 0)
 			return (-1);
-		i++;
 	}
 	return (0);
 }
 
-
 int	main(int argc, char **argv)
 {
 	t_phil_data		*phil;
-	t_philosopher	*philosoph;
+	t_philos		*philosoph;
+	t_forks			*forks;
 	int				fl;
 
 	phil = malloc(sizeof(t_phil_data));
 
+	usleep(15000);
 	if (argc >= 5)
 	{
 		fl = pars_arg(argc, phil, argv);
@@ -133,11 +135,6 @@ int	main(int argc, char **argv)
 			write(2, "Incorrect data\n", 15);
 			return (1);
 		}
-		printf("number philosopher = %d\n", phil->num_phil);
-		//printf("time died = %llu\n", phil->died);
-		//printf("time eating = %llu\n", phil->eating);
-		//printf("time sleeping = %llu\n", phil->sleeping);
-		//printf("number eating = %d\n", phil->num_eat);
 	}
 	else
 	{
@@ -145,11 +142,12 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	philosoph = NULL;
-	ft_init_phil(&philosoph, phil);
-	if (ft_init_mutex(philosoph, phil) == -1)
+	forks = (t_forks *)malloc(sizeof(t_forks) * (phil->num_phil + 1));
+	ft_init_phil(&philosoph, phil, forks);
+
+	if (ft_init_mutex(forks, phil) == -1)
 		return (1); //!Вывысти ошибку
 	ft_create_philoph(&philosoph, phil);
-
 
 	return (0);
 }
