@@ -1,19 +1,9 @@
 NAME = philo
 
-LIB = lib.a
-
-SRC = main.c \
-	check.c \
-	init.c \
-	utils/iseven.c \
-	utils/err_func.c \
-	utils/clean.c \
-	utils/get_time.c \
-	utils/ft_strlen.c \
-	utils/ft_calloc.c \
-	utils/ft_atoi.c \
-	utils/ft_itoa.c \
-	utils/ft_strcmp.c
+SRC = philo.c\
+	ft_thread_phil.c\
+	ft_utils.c\
+	ft_subsidary.c\
 
 CC = gcc
 
@@ -25,11 +15,9 @@ OBJ = $(SRC:.c=.o)
 
 all: $(NAME)
 
-$(NAME) : $(LIB)
+$(NAME) :
 	$(CC) $(CFLAGS) $^ -o $(NAME)
 
-$(LIB): $(OBJ)
-	ar rcs $(LIB) $?
 
 %.o: %.c
 	$(CC) $(СFLAGS) -o $@ -c $< -I.
@@ -38,7 +26,7 @@ clean:
 	$(RM) $(OBJ)
 
 fclean: clean
-	$(RM) $(NAME) $(LIB)
+	$(RM) $(NAME)
 
 re: fclean all
 
