@@ -6,7 +6,7 @@
 /*   By: aamarei <aamarei@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/15 10:46:50 by aamarei           #+#    #+#             */
-/*   Updated: 2021/07/17 13:25:19 by aamarei          ###   ########.fr       */
+/*   Updated: 2021/07/18 09:56:24 by aamarei          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	pars_arg(int c, t_phil_data *phil, char **v)
 		phil->num_eat = -1;
 	else if (c > 6)
 		return (-1);
-	printf("er = %d\n", pthread_mutex_init(&phil->prin, NULL));
+	pthread_mutex_init(&phil->prin, NULL);
 	return (0);
 }
 
@@ -76,6 +76,15 @@ int	ft_init_mutex(t_forks *forks, t_phil_data *tm)
 	return (0);
 }
 
+void	ft_destroy_mutex(t_forks *forks, t_phil_data *tm)
+{
+	int	i;
+
+	i = 0;
+	while (++i <= tm->num_phil)
+		pthread_mutex_destroy(&forks[i].fork);
+}
+
 int	main(int argc, char **argv)
 {
 	t_phil_data		*phil;
@@ -98,5 +107,7 @@ int	main(int argc, char **argv)
 	if (ft_init_mutex(forks, phil) == -1)
 		return (ft_output_err(1, "Fatal error\n"));
 	ft_create_philoph(&philosoph, phil);
+	ft_destroy_mutex(forks, phil);
+	pthread_mutex_destroy(&(*phil).prin);
 	return (0);
 }

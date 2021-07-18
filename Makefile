@@ -3,7 +3,9 @@ NAME = philo
 SRC = philo.c\
 	ft_thread_phil.c\
 	ft_utils.c\
-	ft_subsidary.c\
+	ft_subsidiary.c
+
+SRCH = philo.h
 
 CC = gcc
 
@@ -15,12 +17,15 @@ OBJ = $(SRC:.c=.o)
 
 all: $(NAME)
 
-$(NAME) :
+$(NAME): $(OBJ)
 	$(CC) $(CFLAGS) $^ -o $(NAME)
 
 
 %.o: %.c
 	$(CC) $(СFLAGS) -o $@ -c $< -I.
+
+norm:
+	norminette $(SRC) $(SRCH)
 
 clean:
 	$(RM) $(OBJ)

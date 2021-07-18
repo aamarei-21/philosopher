@@ -6,7 +6,7 @@
 /*   By: aamarei <aamarei@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/17 13:02:20 by aamarei           #+#    #+#             */
-/*   Updated: 2021/07/17 14:48:52 by aamarei          ###   ########.fr       */
+/*   Updated: 2021/07/17 16:42:16 by aamarei          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int	ft_output_err(int code, char *str)
 
 int	ft_even(int c)
 {
-	if (c == 2 * (c / 2))
+	if (c % 2 == 0)
 		return (1);
 	else
 		return (0);
