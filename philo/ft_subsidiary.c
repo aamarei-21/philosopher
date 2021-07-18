@@ -6,33 +6,28 @@
 /*   By: aamarei <aamarei@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/17 14:46:27 by aamarei           #+#    #+#             */
-/*   Updated: 2021/07/17 14:47:06 by aamarei          ###   ########.fr       */
+/*   Updated: 2021/07/18 13:56:20 by aamarei          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-unsigned long long	ft_gettime(void)
-{
-	struct timeval	time;
-
-	gettimeofday(&time, NULL);
-	return ((unsigned long long)time.tv_sec * 1000
-		+ (unsigned long long)time.tv_usec / 1000);
-}
 
 unsigned long long	ft_relative_time(void)
 {
 	static int					fl = 0;
 	static unsigned long long	start;
 	unsigned long long			finish;
+	struct timeval				time;
 
+	gettimeofday(&time, NULL);
+	finish = (unsigned long long)time.tv_sec * 1000
+		+ (unsigned long long)time.tv_usec / 1000;
 	if (fl == 0)
 	{
-		start = ft_gettime();
+		start = finish;
 		fl = 1;
 	}
-	return (ft_gettime() - start);
+	return (finish - start);
 }
 
 void	ft_wait(unsigned long long tm)
@@ -41,7 +36,7 @@ void	ft_wait(unsigned long long tm)
 
 	finish = ft_relative_time() + tm;
 	while (ft_relative_time() < finish)
-		usleep(1);
+		usleep(500);
 }
 
 void	informer(t_philos **phil, int k, unsigned long long time, int fl)

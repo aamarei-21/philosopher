@@ -6,7 +6,7 @@
 /*   By: aamarei <aamarei@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/15 10:46:50 by aamarei           #+#    #+#             */
-/*   Updated: 2021/07/18 09:56:24 by aamarei          ###   ########.fr       */
+/*   Updated: 2021/07/18 13:55:37 by aamarei          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,16 @@
 int	pars_arg(int c, t_phil_data *phil, char **v)
 {
 	phil->fl = 1;
-	phil->num_phil = ft_digit(v[1]);
-	phil->died = ft_digit(v[2]);
-	phil->eating = ft_digit(v[3]);
-	phil->sleeping = ft_digit(v[4]);
+	phil->num_phil = ft_atoi(v[1]);
+	phil->died = ft_atoi(v[2]);
+	phil->eating = ft_atoi(v[3]);
+	phil->sleeping = ft_atoi(v[4]);
 	if (phil->num_phil == 0 || phil->died == 0 || phil->eating == 0
 		|| phil->sleeping == 0)
 		return (-1);
 	if (c == 6)
 	{
-		phil->num_eat = ft_digit(v[5]);
+		phil->num_eat = atoi(v[5]);
 		if (phil->num_eat <= 0)
 			return (-1);
 	}

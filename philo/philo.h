@@ -6,7 +6,7 @@
 /*   By: aamarei <aamarei@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/15 10:19:37 by aamarei           #+#    #+#             */
-/*   Updated: 2021/07/17 14:50:30 by aamarei          ###   ########.fr       */
+/*   Updated: 2021/07/18 13:55:18 by aamarei          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,8 @@ void				ft_wait(unsigned long long tm);
 void				informer(t_philos **phil, int k,
 						unsigned long long time, int fl);
 void				ft_wait(unsigned long long tm);
-int					ft_digit(char *d);
 int					ft_atoi(char *s);
-int					ft_strlen(char *str);
 int					ft_output_err(int code, char *str);
-int					ft_even(int c);
 int					pars_arg(int c, t_phil_data *phil, char **v);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: aamarei <aamarei@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/17 13:02:20 by aamarei           #+#    #+#             */
-/*   Updated: 2021/07/17 16:42:16 by aamarei          ###   ########.fr       */
+/*   Updated: 2021/07/18 13:55:32 by aamarei          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,41 +36,18 @@ int	ft_atoi(char *s)
 		num = 10 * num + s[i] - 48;
 		i++;
 	}
-	if (s[i] == '\0')
-		return (zn * num);
+	if (s[i] == '\0' && zn == 1)
+		return (num);
 	return (0);
-}
-
-int	ft_digit(char *d)
-{
-	int		num;
-
-	num = ft_atoi(d);
-	if (num < 0)
-		num = 0;
-	return (num);
-}
-
-int	ft_strlen(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str && str[i] != '\0')
-		i++;
-	return (i);
 }
 
 int	ft_output_err(int code, char *str)
 {
-	write(2, str, ft_strlen(str));
-	return (code);
-}
+	int	len;
 
-int	ft_even(int c)
-{
-	if (c % 2 == 0)
-		return (1);
-	else
-		return (0);
+	len = 0;
+	while (str && str[len] != '\0')
+		len++;
+	write(1, str, len);
+	return (code);
 }

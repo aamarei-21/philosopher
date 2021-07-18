@@ -6,7 +6,7 @@
 /*   By: aamarei <aamarei@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/15 18:57:34 by aamarei           #+#    #+#             */
-/*   Updated: 2021/07/17 14:47:07 by aamarei          ###   ########.fr       */
+/*   Updated: 2021/07/18 14:11:44 by aamarei          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,8 @@ void	*main_thread(void *ph)
 	phil->time_died = time + phil->start_data->died;
 	pthread_create(&th, NULL, monitor_died, (void *)(phil));
 	pthread_detach(th);
-	if (!ft_even(phil->num))
-		ft_wait(1);
+	if ((phil->num & 1) == 0)
+		ft_wait(10);
 	ft_thread_cicle(&phil, th);
 	phil->start_data->fl = 2;
 	return (0);
