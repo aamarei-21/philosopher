@@ -25,7 +25,7 @@ $(NAME): $(OBJ)
 	$(CC) $(СFLAGS) -o $@ -c $< -I.
 
 norm:
-	norminette $(SRC) $(SRCH)
+	@norminette $(SRC) $(SRCH)
 
 clean:
 	$(RM) $(OBJ)

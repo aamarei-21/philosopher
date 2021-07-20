@@ -1,11 +1,11 @@
 NAME = philo_bonus
 
 SRC = philo_bonus.c\
-	ft_thread_phil.c\
-	ft_utils.c\
-	ft_subsidiary.c
+	ft_thread_phil_bonus.c\
+	ft_utils_bonus.c\
+	ft_subsidiary_bonus.c
 
-SRCH = philo.h
+SRCH = philo_bonus.h
 
 CC = gcc
 
@@ -25,7 +25,7 @@ $(NAME): $(OBJ)
 	$(CC) $(СFLAGS) -o $@ -c $< -I.
 
 norm:
-	norminette $(SRC) $(SRCH)
+	@norminette $(SRC) $(SRCH)
 
 clean:
 	$(RM) $(OBJ)

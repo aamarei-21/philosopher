@@ -6,11 +6,11 @@
 /*   By: aamarei <aamarei@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/17 14:46:27 by aamarei           #+#    #+#             */
-/*   Updated: 2021/07/18 17:10:37 by aamarei          ###   ########.fr       */
+/*   Updated: 2021/07/20 12:15:30 by aamarei          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 unsigned long long	ft_relative_time(void)
 {
@@ -36,24 +36,24 @@ void	ft_wait(unsigned long long tm)
 
 	finish = ft_relative_time() + tm;
 	while (ft_relative_time() < finish)
-		usleep(500);
+		usleep(333);
 }
 
-void	informer(t_philos **phil, int k, unsigned long long time, int fl)
+void	informer(t_philos *phil, int k, unsigned long long time, int fl)
 {
-	pthread_mutex_lock(&(*phil)->start_data->prin);
+	sem_wait(phil->start_data->prin);
 	if (k == 1)
-		printf("%llu ms: %d has taken a right fork\n", time, (*phil)->num);
+		printf("%llu ms: %d has taken a right fork\n", time, phil->num);
 	else if (k == 2)
-		printf("%llu ms: %d has taken a left fork\n", time, (*phil)->num);
+		printf("%llu ms: %d has taken a left fork\n", time, phil->num);
 	else if (k == 3)
-		printf("%llu ms: %d is eating\n", time, (*phil)->num);
+		printf("%llu ms: %d is eating\n", time, phil->num);
 	else if (k == 4)
-		printf("%llu ms: %d is sleeping\n", time, (*phil)->num);
+		printf("%llu ms: %d is sleeping\n", time, phil->num);
 	else if (k == 5)
-		printf("%llu ms: %d is thinking\n", time, (*phil)->num);
+		printf("%llu ms: %d is thinking\n", time, phil->num);
 	else if (k == 6)
-		printf("%llu ms: %d died\n", time, (*phil)->num);
+		printf("%llu ms: %d died\n", time, phil->num);
 	if (fl)
-		pthread_mutex_unlock(&(*phil)->start_data->prin);
+		sem_post(phil->start_data->prin);
 }
